@@ -24,6 +24,12 @@ def predict():
     if not disease or features is None:
         return jsonify({"error": "Missing input"}), 400
 
+    # Pad dummy values if needed for heart model
+    if disease == "heart":
+        expected_features = 13
+        if len(features) < expected_features:
+            features += [0] * (expected_features - len(features))  # Add 0s to match
+
     X = np.array(features).reshape(1, -1)
 
     if disease == "heart":
@@ -35,15 +41,18 @@ def predict():
     else:
         return jsonify({"error": "Invalid disease type"}), 400
 
-    prediction = model.predict(X)[0]
-    confidence = model.predict_proba(X).max()
+    try:
+        prediction = model.predict(X)[0]
+        confidence = model.predict_proba(X).max()
 
-    return jsonify({
-        "prediction": int(prediction),
-        "confidence": round(float(confidence), 4)
-    })
+        return jsonify({
+            "prediction": int(prediction),
+            "confidence": round(float(confidence), 4)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-# Required for Render
+# Required for Render deployment
 if __name__ == '__main__':
     from os import environ
     app.run(host='0.0.0.0', port=int(environ.get("PORT", 5000)))
