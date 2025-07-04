@@ -7,7 +7,7 @@ st.title("🏥 Disease Risk Predictor + Health Tracker")
 st.write("Enter your health details to predict your disease risk.")
 
 # Backend API URL
-API_URL = "http://localhost:5000/predict"
+API_URL = "https://disease-risk-project.onrendecom/predict"
 
 disease = st.selectbox("🔍 Select a disease to predict:", ["heart", "diabetes", "stroke"])
 
