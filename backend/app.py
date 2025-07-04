@@ -6,20 +6,25 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
-# Load models (adjust path if needed)
+# Load models
 heart_model = joblib.load("model/heart_model.pkl")
 diabetes_model = joblib.load("model/diabetes_model.pkl")
 stroke_model = joblib.load("model/stroke_model.pkl")
 
 @app.route("/")
-def home():
+def index():
     return jsonify({"message": "Disease Risk Predictor API is running."})
 
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     disease = data.get("disease")
-    features = np.array(data.get("features")).reshape(1, -1)
+    features = data.get("features")
+
+    if not disease or features is None:
+        return jsonify({"error": "Missing input"}), 400
+
+    X = np.array(features).reshape(1, -1)
 
     if disease == "heart":
         model = heart_model
@@ -30,15 +35,15 @@ def predict():
     else:
         return jsonify({"error": "Invalid disease type"}), 400
 
-    prediction = model.predict(features)[0]
-    confidence = model.predict_proba(features).max()
+    prediction = model.predict(X)[0]
+    confidence = model.predict_proba(X).max()
 
     return jsonify({
         "prediction": int(prediction),
-        "confidence": round(float(confidence), 2)
+        "confidence": round(float(confidence), 4)
     })
 
 # Required for Render
-if __name__ == "__main__":
+if __name__ == '__main__':
     from os import environ
-    app.run(host="0.0.0.0", port=int(environ.get("PORT", 5000)))
+    app.run(host='0.0.0.0', port=int(environ.get("PORT", 5000)))
