@@ -14,7 +14,7 @@ disease = st.selectbox("🔍 Select a disease to predict:", ["heart", "diabetes"
 features = []
 
 # Feature inputs per disease
-if disease == "heart":
+if  disease == "heart":
     st.subheader("🫀 Heart Disease Inputs")
     features.append(st.slider("Age", 20, 80, 50))
     features.append(st.selectbox("Sex", [0, 1]))
@@ -23,7 +23,9 @@ if disease == "heart":
     features.append(st.selectbox("Fasting Blood Sugar > 120 mg/dl", [0, 1]))
     features.append(st.slider("Max Heart Rate Achieved", 60, 202, 150))
     features.append(st.selectbox("Exercise-induced Angina", [0, 1]))
-    features += [0, 1, 0, 0]  # Dummy values for remaining fields (if needed)
+
+    # Add dummy values for missing fields to reach 13
+    features += [0, 0, 0, 0, 0, 0]  # ← These 6 will take total to 13
 
 elif disease == "diabetes":
     st.subheader("🩸 Diabetes Inputs")
